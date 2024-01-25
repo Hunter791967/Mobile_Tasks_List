@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Todo.dart';
+
 class AlertText extends StatefulWidget {
   const AlertText({super.key});
 
@@ -9,22 +10,26 @@ class AlertText extends StatefulWidget {
 
 class _AlertTextState extends State<AlertText> {
   final List<Todo> _todos = [];
-  String newTextInput = '';
-  void _showInputDialog() {
+  //String newTextInput = '';
+  void _showInputDialog(String? oldText, int itemIndex) {
+    TextEditingController _controller = TextEditingController(text: oldText?? '');
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: Colors.deepOrange[700],
-            title: const Text(
+            title: Text(
               'Enter Your Task',
               style: TextStyle(color: Colors.white),
             ),
             content: TextField(
+
+              controller: _controller,
               autofocus: true,
-              onChanged: (value) {
-                newTextInput = value;
-              },
+              // onChanged: (value) {
+              //   newTextInput = value;
+              // },
               maxLength: 100,
               decoration: const InputDecoration(
                 enabledBorder: UnderlineInputBorder(
@@ -50,9 +55,12 @@ class _AlertTextState extends State<AlertText> {
               TextButton(
                 onPressed: () {
                   setState(() {
-                    _todos.add(
-                        Todo(task: newTextInput, isDone: false)
-                        );
+                    if (itemIndex == -1)
+                      _todos.add(Todo(task: _controller.text, isDone: false));
+                    else {
+                      _todos[itemIndex].task = _controller.text;
+                    }
+                    _controller.text = '';
                   });
                   Navigator.of(context).pop();
                 },
@@ -121,6 +129,7 @@ class _AlertTextState extends State<AlertText> {
                           IconButton(
                             icon: const Icon(Icons.edit_calendar),
                             onPressed: () {
+                              _showInputDialog(_todos[index].task, index);
                               setState(() {
                                 // _textInput[index] =
                               });
@@ -151,7 +160,9 @@ class _AlertTextState extends State<AlertText> {
               child: MaterialButton(
                 color: Colors.deepOrange,
                 shape: const CircleBorder(),
-                onPressed: _showInputDialog,
+                onPressed: () {
+                  _showInputDialog(null, -1);
+                },
                 child: const Icon(
                   Icons.edit,
                   color: Colors.white,
