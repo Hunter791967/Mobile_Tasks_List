@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'Todo.dart';
 class AlertText extends StatefulWidget {
   const AlertText({super.key});
 
@@ -8,7 +8,7 @@ class AlertText extends StatefulWidget {
 }
 
 class _AlertTextState extends State<AlertText> {
-  final List _textInput = [];
+  final List<Todo> _todos = [];
   String newTextInput = '';
   void _showInputDialog() {
     showDialog(
@@ -50,7 +50,9 @@ class _AlertTextState extends State<AlertText> {
               TextButton(
                 onPressed: () {
                   setState(() {
-                    _textInput.add(newTextInput);
+                    _todos.add(
+                        Todo(task: newTextInput, isDone: false)
+                        );
                   });
                   Navigator.of(context).pop();
                 },
@@ -88,24 +90,25 @@ class _AlertTextState extends State<AlertText> {
                 ),
               ),
               child: ListView.builder(
-                  itemCount: _textInput.length,
+                  itemCount: _todos.length,
                   itemBuilder: (context, index) {
                     // final List toDo = [];
                     return ListTile(
                       leading: Checkbox(
-                        value: checkBoxValue,
+                        value: _todos[index].isDone,
+
                         side: const BorderSide(width: 2, color: Colors.white),
                         // fillColor: MaterialStateProperty.all(Colors.white),
                         activeColor: Colors.white,
                         checkColor: Colors.deepOrange,
-                        onChanged: (value) {
+                        onChanged: (bool? value) {
                           setState(() {
-                            checkBoxValue = value!;
+                            _todos[index].isDone = value!;
                           });
                         },
                       ),
                       title: Text(
-                        _textInput[index],
+                        _todos[index].task,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                             color: Colors.white,
@@ -129,7 +132,7 @@ class _AlertTextState extends State<AlertText> {
                             icon: const Icon(Icons.delete),
                             onPressed: () {
                               setState(() {
-                                _textInput.removeAt(index);
+                                _todos.removeAt(index);
                               });
                             },
                             color: Colors.white,
